@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- Load the Paper.js library -->
+<script type="text/javascript" src="js/dist/paper-full.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<!-- Define inlined PaperScript associate it with myCanvas -->
+<script type="text/paperscript" canvas="paper">
+$(function() { 
+	var points = 10; 
+	var length = 15; // Longueur du serpent
+	var tool = new Tool();
+	var myPath = CreerSerpent('#C00'); // Création du serpent (rouge)
+	
+	/*
+
+		Création d'un serpent de couleur color.
+
+	*/
+
+	function CreerSerpent(color) {
+		var path = new paper.Path({
+			strokeColor: color, // couleur
+			strokeWidth: 20,	// epaisseur
+			strokeCap: 'round'	// forme des extrémités
+		}); // Création de l'objet
+		
+		var start = new paper.Point(Math.random()*100,Math.random()*100); // Point de départ de la création du serpent (tête)
+		for(var i = 0; i < points; i++) {
+			path.add(new paper.Point(i * length + start.x, 0 + start.y)); // Création point par point du corps.
+		}
+		
+		return path;
+	}
+    
+    var x;
+    var y;
+
+    /*
+
+		Gestion des mouvements du serpent
+
+    */
+	function deplacement(event) {
+		myPath.firstSegment.point.x += (x - myPath.firstSegment.point.x)/10; // Modif des coordonnées x de la tête du serpent 
+        myPath.firstSegment.point.y += (y - myPath.firstSegment.point.y)/10; // Modif des coordonnées y de la tête du serpent
+        	// Pour chaque points constituant le serpent
+            for (var i = 0; i < points - 1; i++) {
+                var segment = myPath.segments[i]; // Tableau constitué des points du corps du serpent
+                var nextSegment = segment.next; // Stocke le prochain point
+                // Création du vecteur et de sa taille
+                var vector = new paper.Point(segment.point.x - nextSegment.point.x,segment.point.y - nextSegment.point.y);
+                vector.length = length;
+                nextSegment.point = new paper.Point(segment.point.x - vector.x,segment.point.y - vector.y);
+            }
+            myPath.smooth(); // arrondi les angles
+    }
+    
+	paper.tool.onMouseDown = function(event) {
+        x = event.event.offsetX;
+        y = event.event.offsetY;
+        paper.view.attach('frame', moveSeg);
+	}
+
+});
+</script>
+</head>
+<body>
+	<canvas id="paper" width="1200" height="600"></canvas>
+</body>
+</html>

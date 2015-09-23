@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- Load the Paper.js library -->
+<script type="text/javascript" src="js/dist/paper-full.js"></script>
+<!-- Define inlined PaperScript associate it with myCanvas -->
+<script type="text/paperscript" canvas="myCanvas">
+var myPath;
+
+function onMouseDown(event) {
+	myPath = new Path();
+	myPath.strokeColor = 'blue',
+	myPath.strokeWidth = 8;
+}
+
+/*function onMouseDrag(event) {
+	var i = 0;
+	if(i < 100) {
+		i++;
+	}
+	else {
+
+	}
+	myPath.add(event.point);
+}*/
+
+
+
+function onMouseUp(event) {
+	alert("ahah mauvais");
+}
+</script>
+</head>
+<body>
+	<canvas id="myCanvas" width="1200" height="600"></canvas>
+</body>
+</html>
