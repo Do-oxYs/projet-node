@@ -6,11 +6,13 @@
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
 <!-- Define inlined PaperScript associate it with myCanvas -->
 <script type="text/paperscript" canvas="paper">
-$(function() { 
+$(function() {
 	var points = 10; 
 	var length = 15; // Longueur du serpent
 	var tool = new Tool();
 	var myPath = CreerSerpent('#C00'); // Création du serpent (rouge)
+	var vector = new Point(24,60);
+	vector.length = 5;
 	
 	/*
 
@@ -59,9 +61,37 @@ $(function() {
 	paper.tool.onMouseDown = function(event) {
         x = event.event.offsetX;
         y = event.event.offsetY;
-        paper.view.attach('frame', moveSeg);
+        paper.view.attach('frame', deplacement);
 	}
+	paper.tool.onFrame = function(event) {
+	// Loop through the segments of the path:
+	for (var i = 0; i <= amount; i++) {
+		alert(amount);
+		var segment = path.segments[i];
 
+		// A cylic value between -1 and 1
+		var sinus = Math.sin(event.time * 3 + i);
+		
+		// Change the y position of the segment point:
+		segment.point.y = sinus * height + 100;
+	}
+	var item = project.activeLayer.children[0];
+	if (item.bounds.left > view.size.width) {
+		item.position.x = 0;
+	}
+	else if (item.bounds.right < 0) {
+		item.position.x = view.bounds.width;
+	}
+	else if (item.bounds.top  > view.size.height) {
+		item.position.y = 0;
+	}
+	else if (item.bounds.bottom < 0) {
+		item.position.y = view.size.height;
+	}
+	// Uncomment the following line and run the script again
+	// to smooth the path:
+	// path.smooth();
+}
 });
 </script>
 </head>

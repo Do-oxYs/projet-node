@@ -4,34 +4,37 @@
 <!-- Load the Paper.js library -->
 <script type="text/javascript" src="js/dist/paper-full.js"></script>
 <!-- Define inlined PaperScript associate it with myCanvas -->
-<script type="text/paperscript" canvas="myCanvas">
-var myPath;
+<script type="text/paperscript" canvas="paper">
+var path = new Path.Circle(new Point(80, 50), 30);
+path.fillColor = 'red';
+var vector = new Point(24,60);
+vector.length = 5;
 
 function onMouseDown(event) {
-	myPath = new Path();
-	myPath.strokeColor = 'blue',
-	myPath.strokeWidth = 8;
+	vector = event.point - path.position;
+	vector.length = 5;
 }
 
-/*function onMouseDrag(event) {
-	var i = 0;
-	if(i < 100) {
-		i++;
+function onFrame(event) {
+	path.translate(vector);
+	var item = project.activeLayer.children[0];
+	if (item.bounds.left > view.size.width) {
+		item.position.x = 0;
 	}
-	else {
-
+	else if (item.bounds.right < 0) {
+		item.position.x = view.bounds.width;
 	}
-	myPath.add(event.point);
-}*/
-
-
-
-function onMouseUp(event) {
-	alert("ahah mauvais");
+	else if (item.bounds.top  > view.size.height) {
+		item.position.y = 0;
+	}
+	else if (item.bounds.bottom < 0) {
+		item.position.y = view.size.height;
+	}
 }
+
 </script>
 </head>
 <body>
-	<canvas id="myCanvas" width="1200" height="600"></canvas>
+	<canvas id="paper" width="1200" height="600"></canvas>
 </body>
 </html>
