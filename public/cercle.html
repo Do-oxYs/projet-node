@@ -21,7 +21,7 @@ $(function() {
 	*/
 
 	function CreerSerpent(color) {
-		var path = new paper.Path({
+		var myPath = new paper.Path({
 			strokeColor: color, // couleur
 			strokeWidth: 20,	// epaisseur
 			strokeCap: 'round'	// forme des extrémités
@@ -29,10 +29,10 @@ $(function() {
 		
 		var start = new paper.Point(Math.random()*100,Math.random()*100); // Point de départ de la création du serpent (tête)
 		for(var i = 0; i < points; i++) {
-			path.add(new paper.Point(i * length + start.x, 0 + start.y)); // Création point par point du corps.
+			myPath.add(new paper.Point(i * length + start.x, 0 + start.y)); // Création point par point du corps.
 		}
 		
-		return path;
+		return myPath;
 	}
     
     var x;
@@ -46,15 +46,29 @@ $(function() {
 	function deplacement(event) {
 		myPath.firstSegment.point.x += (x - myPath.firstSegment.point.x)/10; // Modif des coordonnées x de la tête du serpent 
         myPath.firstSegment.point.y += (y - myPath.firstSegment.point.y)/10; // Modif des coordonnées y de la tête du serpent
+        var vector = new paper.Point(segment.point.x - nextSegment.point.x,segment.point.y - nextSegment.point.y);
         	// Pour chaque points constituant le serpent
             for (var i = 0; i < points - 1; i++) {
+				var item = project.activeLayer.children[i];
                 var segment = myPath.segments[i]; // Tableau constitué des points du corps du serpent
                 var nextSegment = segment.next; // Stocke le prochain point
                 // Création du vecteur et de sa taille
-                var vector = new paper.Point(segment.point.x - nextSegment.point.x,segment.point.y - nextSegment.point.y);
                 vector.length = length;
                 nextSegment.point = new paper.Point(segment.point.x - vector.x,segment.point.y - vector.y);
+                /*if (item.bounds.left > view.size.width) {
+					item.position.x = 0;
+				}
+				else if (item.bounds.right < 0) {
+					item.position.x = view.bounds.width;
+				}
+				else if (item.bounds.top  > view.size.height) {
+					item.position.y = 0;
+				}
+				else if (item.bounds.bottom < 0) {
+					item.position.y = view.size.height;
+				}*/
             }
+            myPath.translate(vector);
             myPath.smooth(); // arrondi les angles
     }
     
@@ -64,29 +78,20 @@ $(function() {
         paper.view.attach('frame', deplacement);
 	}
 	paper.tool.onFrame = function(event) {
-	// Loop through the segments of the path:
-	for (var i = 0; i <= amount; i++) {
-		alert(amount);
-		var segment = path.segments[i];
-
-		// A cylic value between -1 and 1
-		var sinus = Math.sin(event.time * 3 + i);
-		
-		// Change the y position of the segment point:
-		segment.point.y = sinus * height + 100;
-	}
-	var item = project.activeLayer.children[0];
-	if (item.bounds.left > view.size.width) {
-		item.position.x = 0;
-	}
-	else if (item.bounds.right < 0) {
-		item.position.x = view.bounds.width;
-	}
-	else if (item.bounds.top  > view.size.height) {
-		item.position.y = 0;
-	}
-	else if (item.bounds.bottom < 0) {
-		item.position.y = view.size.height;
+	for(var i = 0; i < myPath.length; i++) {
+		var item = project.activeLayer.children[i];
+		if (item.bounds.left > view.size.width) {
+			item.position.x = 0;
+		}
+		else if (item.bounds.right < 0) {
+			item.position.x = view.bounds.width;
+		}
+		else if (item.bounds.top  > view.size.height) {
+			item.position.y = 0;
+		}
+		else if (item.bounds.bottom < 0) {
+			item.position.y = view.size.height;
+		}
 	}
 	// Uncomment the following line and run the script again
 	// to smooth the path:

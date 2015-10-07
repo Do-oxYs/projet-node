@@ -5,31 +5,43 @@
 <script type="text/javascript" src="js/dist/paper-full.js"></script>
 <!-- Define inlined PaperScript associate it with myCanvas -->
 <script type="text/paperscript" canvas="paper">
-var path = new Path.Circle(new Point(80, 50), 30);
-path.fillColor = 'red';
+var paths = [];
+var j = 20;
+for(var i = 0; i <= 10; i++) {
+	paths[i] = new Path.Circle(new Point(270 - j, 25), 15);
+	paths[i].fillColor = 'red';
+	j = j + 20;
+}
+var x,y;
 var vector = new Point(24,60);
 vector.length = 5;
 
 function onMouseDown(event) {
-	vector = event.point - path.position;
-	vector.length = 5;
+		vector = event.point - paths[0].position;
+		vector.length = 5;
 }
 
 function onFrame(event) {
-	path.translate(vector);
-	var item = project.activeLayer.children[0];
-	if (item.bounds.left > view.size.width) {
-		item.position.x = 0;
-	}
-	else if (item.bounds.right < 0) {
-		item.position.x = view.bounds.width;
-	}
-	else if (item.bounds.top  > view.size.height) {
-		item.position.y = 0;
-	}
-	else if (item.bounds.bottom < 0) {
-		item.position.y = view.size.height;
-	}
+	var v;
+	paths[0].translate(vector);
+	for(var i = 1; i <= paths.length - 1; i++) {
+		v = paths[i-1].position - paths[i].position;
+		v.length = 5;
+		paths[i].translate(v);
+		/*var item = project.activeLayer.children[i-1];
+		if (item.bounds.left > view.size.width) {
+			item.position.x = 0;
+		}
+		else if (item.bounds.right < 0) {
+			item.position.x = view.bounds.width;
+		}
+		else if (item.bounds.top  > view.size.height) {
+			item.position.y = 0;
+		}
+		else if (item.bounds.bottom < 0) {
+			item.position.y = view.size.height;
+		}*/
+	}	
 }
 
 </script>
